@@ -1,6 +1,7 @@
 package com.example.alisa.coolweather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.example.alisa.coolweather.db.City;
 import com.example.alisa.coolweather.db.Country;
 import com.example.alisa.coolweather.db.Province;
+import com.example.alisa.coolweather.gson.Weather;
 import com.example.alisa.coolweather.util.HttpUtil;
 import com.example.alisa.coolweather.util.Utility;
 
@@ -90,6 +92,19 @@ public class ChooseAreaFragment extends Fragment {
                 }else if (currentLevel==LEVEL_CITY){
                     selectedCity=cityList.get(position);
                     queryCountries();
+                }else if (currentLevel==LEVEL_COUNTRY){
+                    String weatherId=countryList.get(position).getWeatherId();
+                    if (getActivity()instanceof MainActivity){
+                        Intent intent=new Intent(getActivity(),WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if (getActivity()instanceof WeatherActivity){
+                        WeatherActivity activity=(WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
